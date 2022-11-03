@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/guswnsakvk/security_login_page#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongodb": "^4.11.0"
   }
 }
