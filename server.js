@@ -5,7 +5,7 @@ app.use(bodyParser.urlencoded({ extended : true}))
 
 let db
 const MongoClient = require('mongodb').MongoClient
-MongoClient.connect("mongodb+srv://admin:qwer1234@cluster0.k5lltli.mongodb.net/?retryWrites=true&w=majority", function(error, client){
+MongoClient.connect("mongodb+srv://test:1234@cluster0.k5lltli.mongodb.net/?retryWrites=true&w=majority", function(error, client){
   db = client.db('security_login')
 
   db.collection('user').insertOne({이름 : "현준", 나이 : 23}, function(error, result){
@@ -19,4 +19,8 @@ MongoClient.connect("mongodb+srv://admin:qwer1234@cluster0.k5lltli.mongodb.net/?
 
 app.get('/pet', function(요청, 응답) { 
   응답.send('펫용품 사시오')
+})
+
+app.get('/test', function(요청, 응답) { 
+  응답.send('test페이지입니다.')
 })

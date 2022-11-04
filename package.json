@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/guswnsakvk/security_login_page#readme",
   "dependencies": {
+    "body-parser": "^1.20.1",
     "express": "^4.18.2",
-    "mongodb": "^4.11.0"
+    "mongodb": "^3.6.4"
   }
 }
