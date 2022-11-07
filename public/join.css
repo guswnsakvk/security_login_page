@@ -8,7 +8,7 @@
   box-sizing: border-box
 }
 
-.login-from{
+.join-form{
   margin: 0 auto;
   max-width: 350px;
   max-height: 400px;
@@ -21,7 +21,7 @@
   border-radius: 10px;
 }
 
-.login-title{
+.join-title{
   width: 120px;
   height: 70px;
   margin: 0 auto;
@@ -31,12 +31,12 @@
   font-family: Arial,  sans-serif;
 }
 
-.login-input-area{
+.join-area{
   text-align: center;
   margin-top: 40px;
 }
 
-.login-input{
+.join-input{
   width: 80%;
   height: 20px;
   border-top: none;
@@ -45,19 +45,19 @@
   border-bottom: 3px solid #DADDE2;
 }
 
-.login-input::placeholder{
+.join-input::placeholder{
   color: #DADDE2;
 }
 
-.login-input:focus{
+.join-input:focus{
   outline: none;
 }
 
-.login-input:last-child{
+.join-input:last-child{
   margin-top: 30px;
 }
 
-.login-btn-area{
+.join-btn-area{
   text-align: center;
 }
 
@@ -71,17 +71,9 @@
   font-family: Arial,  sans-serif;
 }
 
-.login-btn{
+.join-btn{
   background-color: #7781AD;
   color: #fff;
   margin-top: 50px;
   margin-bottom: 30px;
-}
-
-.join{
-  width: 80%;
-  height: 20px;
-  margin: 0 auto;
-  text-align: center;
-  font-family: Arial,  sans-serif;
 }

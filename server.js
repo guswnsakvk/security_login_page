@@ -80,3 +80,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (아이디, done) {
   done(null, {})
 }); 
+
+app.get('/join', function(요청, 응답){
+  응답.render('join.ejs')
+})
