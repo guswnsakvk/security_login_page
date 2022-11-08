@@ -86,8 +86,21 @@ app.get('/join', function(요청, 응답){
 })
 
 app.post("/join", function(요청, 응답){
-  db.collection("user").insertOne({id : 요청.body.id, pw : 요청.body.pw}, function(){
-    console.log('저장완료')
-    응답.redirect('/')
+  // 1. 아이디 중복 확인
+  // 1.1 중복시 알람
+  // 2. 아이디 조건 걸기(대소문자, 특수문자)
+  // 3. 위험문자 제한 걸기
+  // 4. 비밀번호 암호화하기
+  // 5. 데이터 저장
+
+  db.collection("user").findOne({id : 요청.body.id}, function(에러, 결과){
+    if(결과){
+      console.log("이미 사용된 아이디입니다.")
+    } else{
+      db.collection("user").insertOne({id : 요청.body.id, pw : 요청.body.pw}, function(){
+        console.log('저장완료')
+        응답.redirect('/')
+      })
+    }
   })
 })
