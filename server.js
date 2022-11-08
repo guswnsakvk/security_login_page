@@ -95,11 +95,11 @@ app.post("/join", function(요청, 응답){
 
   db.collection("user").findOne({id : 요청.body.id}, function(에러, 결과){
     if(결과){
-      console.log("이미 사용된 아이디입니다.")
+      응답.status(400).send({message : '이미 사용중인 아이디입니다.'})
     } else{
       db.collection("user").insertOne({id : 요청.body.id, pw : 요청.body.pw}, function(){
         console.log('저장완료')
-        응답.redirect('/')
+        응답.status(200).send({message : "회원가입 성공했습니다."})
       })
     }
   })
