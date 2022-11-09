@@ -1,11 +1,15 @@
 const express = require('express');
 const app = express();
+
+// ejs에서 데이터를 가져올 때 사용하는 body-parser
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended : true}))
 app.set('view engine', 'ejs')
 
+// ejs에 css 연결할 떄 사용하는 코드
 app.use('/public', express.static('public'))
 
+// 회원가입할 때 사용하는 passport, passport-local, express-session
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
@@ -14,6 +18,12 @@ app.use(session({secret : '비밀코드', resave : true, saveUninitialized: fals
 app.use(passport.initialize());
 app.use(passport.session()); 
 
+// 비밀 번호 암호화할 때 사용하는 crypto-js
+let CryptoJS = require("crypto-js");
+// 암호화, 암호복구할 떄 사용하는 키
+let secretKey = 'secret key'
+
+// 몽고디비 연결하는 코드
 let db
 const MongoClient = require('mongodb').MongoClient
 MongoClient.connect("mongodb+srv://test:1234@cluster0.k5lltli.mongodb.net/?retryWrites=true&w=majority", function(error, client){
@@ -94,9 +104,26 @@ app.post("/join", function(요청, 응답){
   // 5. 데이터 저장
 
   db.collection("user").findOne({id : 요청.body.id}, function(에러, 결과){
+    console.log(에러)
     if(결과){
       응답.status(400).send({message : '이미 사용중인 아이디입니다.'})
     } else{
+      let data = {
+        userId : "test",
+        userPassword : "test"
+      }
+
+      console.log('original : ' + data.userId)
+
+      // 암호화
+      let encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString()
+      console.log('암호화 : ' + encrypted)
+
+      // 암호복구
+      let bytes = CryptoJS.AES.decrypt(encrypted, secretKey)
+      let decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+      console.log('암호복구 : ' + decrypted.userId)
+
       db.collection("user").insertOne({id : 요청.body.id, pw : 요청.body.pw}, function(){
         console.log('저장완료')
         응답.status(200).send({message : "회원가입 성공했습니다."})
