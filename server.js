@@ -108,23 +108,20 @@ app.post("/join", function(요청, 응답){
     if(결과){
       응답.status(400).send({message : '이미 사용중인 아이디입니다.'})
     } else{
-      let data = {
-        userId : "test",
-        userPassword : "test"
-      }
+      let userPW = 요청.body.pw
 
-      console.log('original : ' + data.userId)
+      console.log('original : ' + userPW)
 
       // 암호화
-      let encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString()
+      let encrypted = CryptoJS.AES.encrypt(JSON.stringify(userPW), secretKey).toString()
       console.log('암호화 : ' + encrypted)
 
       // 암호복구
       let bytes = CryptoJS.AES.decrypt(encrypted, secretKey)
       let decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-      console.log('암호복구 : ' + decrypted.userId)
+      console.log('암호복구 : ' + decrypted)
 
-      db.collection("user").insertOne({id : 요청.body.id, pw : 요청.body.pw}, function(){
+      db.collection("user").insertOne({id : 요청.body.id, pw : encrypted}, function(){
         console.log('저장완료')
         응답.status(200).send({message : "회원가입 성공했습니다."})
       })
