@@ -72,7 +72,13 @@ passport.use(new LocalStrategy({
     if (!결과) return done(null, false, { message: '존재하지않는 아이디요' })
     
     // 비밀번호 확인
-    if (입력한비번 == 결과.pw) {
+    // 암호복구
+    let userPW = 결과.pw
+    let bytes = CryptoJS.AES.decrypt(userPW, secretKey)
+    let decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+    console.log('암호복구 : ' + decrypted)
+
+    if (입력한비번 == decrypted) {
       return done(null, 결과)
     } else {
       return done(null, false, { message: '비번틀렸어요' })
@@ -115,11 +121,6 @@ app.post("/join", function(요청, 응답){
       // 암호화
       let encrypted = CryptoJS.AES.encrypt(JSON.stringify(userPW), secretKey).toString()
       console.log('암호화 : ' + encrypted)
-
-      // 암호복구
-      let bytes = CryptoJS.AES.decrypt(encrypted, secretKey)
-      let decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
-      console.log('암호복구 : ' + decrypted)
 
       db.collection("user").insertOne({id : 요청.body.id, pw : encrypted}, function(){
         console.log('저장완료')

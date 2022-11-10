@@ -27,15 +27,25 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
     $('.btn').click(function(e){
-      $.ajax({
-        method : 'POST',
-        url : '/join',
-        data : {id : String($('.new-id').val()), pw : String($('.new-pw').val())}
-      }).done((결과)=>{
-        window.location.replace('/')
-      }).fail((xhr,code,err) => {
-        alert(xhr.responseJSON.message)
-      })
+      const reg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+      const txt = String($('.new-pw').val())
+
+      if(!txt.match(reg)){
+        console.log(reg.test(txt))
+        alert("비밀번호 정규식 규칙 위반!")
+      } else{
+        console.log(reg.test(txt))
+        console.log(txt)
+        $.ajax({
+          method : 'POST',
+          url : '/join',
+          data : {id : String($('.new-id').val()), pw : String($('.new-pw').val())}
+        }).done((결과)=>{
+          window.location.replace('/')
+        }).fail((xhr,code,err) => {
+          alert(xhr.responseJSON.message)
+        })
+      }
     })
   </script>
 </body>
