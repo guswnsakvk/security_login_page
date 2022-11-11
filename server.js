@@ -23,6 +23,34 @@ let CryptoJS = require("crypto-js");
 // 암호화, 암호복구할 떄 사용하는 키
 let secretKey = 'secret key'
 
+// http 헤더를 적절히 설정하여 웹 취약점막는 helmet
+const helmet = require('helmet')
+const cspOptions = {
+  directives: {
+    // 헬멧 기본 옵션 가져오기
+    ...helmet.contentSecurityPolicy.getDefaultDirectives(), // 기본 헬멧 설정 객체를 리턴하는 함수를 받아 전개 연산자로 삽입
+    
+    /* 
+    none : 어떳 것도 허용하지 않음
+	self : 현재 출처에서는 허용하지만 하위 도메인에서는 허용되지 않음
+	unsafe-inline : 인라인 자바스크립트, 인라인 스타일을 허용
+	unsafe-eval	: eval과 같은 텍스트 자바스크립트 메커니즘을 허용 
+    */
+    // 구글 API 도메인과 인라인 스크립트, eval 스크립트를 허용
+    "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "code.jquery.com"]
+ 
+    // 다음과 카카오에서 이미지 소스를 허용
+    // 'img-src': ["'self'", 'data:', '*.daumcdn.net', '*.kakaocdn.net'],
+    
+    // 소스에 https와 http 허용
+    // "base-uri" : ["/", "http:"],
+  }
+}
+
+// app.use(helmet({
+// 	contentSecurityPolicy: cspOptions,
+// }));
+app.use(helmet( { contentSecurityPolicy: false } ));
 // 몽고디비 연결하는 코드
 let db
 const MongoClient = require('mongodb').MongoClient

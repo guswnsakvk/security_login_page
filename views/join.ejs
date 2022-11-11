@@ -26,7 +26,7 @@
 
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
-    $('.btn').click(function(e){
+    $('.btn').click(function(){
       const reg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
       const txt = String($('.new-pw').val())
 
@@ -39,7 +39,10 @@
         $.ajax({
           method : 'POST',
           url : '/join',
-          data : {id : String($('.new-id').val()), pw : String($('.new-pw').val())}
+          data : {id : String($('.new-id').val()), pw : String($('.new-pw').val())},
+          complete : function(resp){
+            console.log(resp.getAllResponseHeaders())
+          }
         }).done((결과)=>{
           window.location.replace('/')
         }).fail((xhr,code,err) => {
