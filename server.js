@@ -47,9 +47,9 @@ const cspOptions = {
   }
 }
 
-// app.use(helmet({
-// 	contentSecurityPolicy: cspOptions,
-// }));
+app.use(helmet({
+	contentSecurityPolicy: cspOptions,
+}));
 app.use(helmet( { contentSecurityPolicy: false } ));
 // 몽고디비 연결하는 코드
 let db
