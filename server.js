@@ -50,7 +50,20 @@ const cspOptions = {
 app.use(helmet({
 	contentSecurityPolicy: cspOptions,
 }));
-app.use(helmet( { contentSecurityPolicy: false } ));
+
+// Response Headers에
+// Server와 X-Powered-By 헤더 정보가 사라짐
+app.use(helmet.hidePoweredBy())
+
+// XSS(교차 사이트 스크립팅) 방어
+app.use(helmet.xssFilter());
+
+// 클릭재킹 방어
+app.use(helmet.frameguard("deny"));
+
+// MIME 스니핑 차단
+app.use(helmet.noSniff());
+
 // 몽고디비 연결하는 코드
 let db
 const MongoClient = require('mongodb').MongoClient
