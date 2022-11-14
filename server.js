@@ -49,6 +49,7 @@ const cspOptions = {
 
 app.use(helmet({
 	contentSecurityPolicy: cspOptions,
+  crossOriginEmbedderPolicy: false
 }));
 
 // Response Headers에
@@ -69,22 +70,10 @@ let db
 const MongoClient = require('mongodb').MongoClient
 MongoClient.connect("mongodb+srv://test:1234@cluster0.k5lltli.mongodb.net/?retryWrites=true&w=majority", function(error, client){
   db = client.db('security_login')
-
-  // db.collection('user').insertOne({이름 : "현준", 나이 : 23}, function(error, result){
-  //   console.log('저장완료')
-  // })
-  
+    
   app.listen(8080, function() {
     console.log('listening on 8080')
   })
-})
-
-app.get('/pet', function(요청, 응답) { 
-  응답.send('펫용품 사시오')
-})
-
-app.get('/test', function(요청, 응답) { 
-  응답.send('test페이지입니다.')
 })
 
 app.get('/', function(요청, 응답){
@@ -95,8 +84,8 @@ app.get('/login_success', function(요청, 응답){
   응답.render('login_success.ejs')
 })
 
-app.post('/', passport.authenticate('local', {failureRedirect : '/'}), function(요청, 응답){
-  응답.redirect('login_success')
+app.post('/', passport.authenticate('local'), function(요청, 응답){
+  응답.status(200).send({message : "로그인했습니다."})
 })
 
 passport.use(new LocalStrategy({
@@ -110,7 +99,7 @@ passport.use(new LocalStrategy({
     if (에러) return done(에러)
 
     // 아이디 확인
-    if (!결과) return done(null, false, { message: '존재하지않는 아이디요' })
+    if (!결과) return done(null, false, { message: '존재하지않는 아이디입니다' })
     
     // 비밀번호 확인
     // 암호복구
