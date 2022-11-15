@@ -62,7 +62,7 @@ app.use(helmet.xssFilter());
 // 클릭재킹 방어
 app.use(helmet.frameguard("deny"));
 
-// MIME 스니핑 차단
+// // MIME 스니핑 차단
 app.use(helmet.noSniff());
 
 // 몽고디비 연결하는 코드
@@ -84,7 +84,9 @@ app.get('/login_success', function(요청, 응답){
   응답.render('login_success.ejs')
 })
 
-app.post('/', passport.authenticate('local'), function(요청, 응답){
+app.post('/', passport.authenticate('local', {failureRedirect : '/', successRedirect: '/login_success'}, (err, user, info) => {
+  console.log(info)
+}), function(요청, 응답){
   응답.status(200).send({message : "로그인했습니다."})
 })
 
@@ -96,11 +98,11 @@ passport.use(new LocalStrategy({
 }, function (입력한아이디, 입력한비번, done) {
   db.collection('user').findOne({ id: 입력한아이디 }, function (에러, 결과) {
     // 에러확인
-    if (에러) return done(에러)
+    if (에러) return done(에러, {message: '에러가 있습니다.'})
 
     // 아이디 확인
     if (!결과) return done(null, false, { message: '존재하지않는 아이디입니다' })
-    
+
     // 비밀번호 확인
     // 암호복구
     let userPW = 결과.pw
@@ -109,7 +111,7 @@ passport.use(new LocalStrategy({
     console.log('암호복구 : ' + decrypted)
 
     if (입력한비번 == decrypted) {
-      return done(null, 결과)
+      return done(null, 결과, {message : "로그인성공했어요"})
     } else {
       return done(null, false, { message: '비번틀렸어요' })
     }
