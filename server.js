@@ -84,11 +84,22 @@ app.get('/login_success', function(요청, 응답){
   응답.render('login_success.ejs')
 })
 
-app.post('/', passport.authenticate('local', {failureRedirect : '/', successRedirect: '/login_success'}, (err, user, info) => {
-  console.log(info)
-}), function(요청, 응답){
-  응답.status(200).send({message : "로그인했습니다."})
-})
+app.post('/', function (요청, 응답) {
+  passport.authenticate('local', {}, function(error, user, msg){
+      console.log(error , user, msg)
+      if (!user) {
+        응답.status(400).send({message : msg})
+      } else {
+        요청.login(user, function(err){
+          if(err){ 
+            응답.status(400).send({message : msg})
+            return next(err) 
+          }
+          응답.status(200).send({message : "회원가입 성공했습니다."})
+        });
+      }
+  })(요청, 응답);
+});
 
 passport.use(new LocalStrategy({
   usernameField: 'id',
