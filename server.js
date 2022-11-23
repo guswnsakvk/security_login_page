@@ -80,8 +80,8 @@ app.get('/', function(요청, 응답){
   응답.render('index.ejs')
 })
 
-app.get('/login_success', function(요청, 응답){
-  응답.render('login_success.ejs')
+app.get('/login_success/:id', function(요청, 응답){
+  응답.render('login_success.ejs', {userName : 요청.params.id})
 })
 
 app.post('/', function (요청, 응답) {
@@ -95,7 +95,7 @@ app.post('/', function (요청, 응답) {
             응답.status(400).send({message : msg})
             return next(err) 
           }
-          응답.status(200).send({message : "회원가입 성공했습니다."})
+          응답.status(200).send({name : user})
         });
       }
   })(요청, 응답);

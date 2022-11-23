@@ -37,7 +37,7 @@
         url : '/',
         data : {id : String($('.id').val()), pw : String($('.pw').val())},
       }).done((결과) => {
-        window.location.replace('/login_success')
+        window.location.replace('/login_success/' + 결과.name.id)
       }).fail((xhr,code,err) => {
         alert(xhr.responseJSON.message.message)
         window.location.replace('/')
