@@ -86,12 +86,25 @@ app.get('/login_success/:id', function(요청, 응답){
 
 app.post('/', function (요청, 응답) {
   passport.authenticate('local', {}, function(error, user, msg){
-      console.log(error , user, msg)
       if (!user) {
+        if(msg.message === '비번틀렸어요'){
+          db.collection("user").findOne({id:msg.userId}, function(에러, 결과){
+            if(결과.count < 5){
+              db.collection("user").updateOne({id:msg.userId}, {$inc: {count : 1}}, function(에러, 결과){
+                console.log("1증가함")
+              })
+            } else{
+              db.collection("user").updateOne({id:msg.userId}, {$set: {block : "true"}}, function(에러, 결과){
+                console.log("block됨")
+              })
+            }
+          })
+        }
+        console.log(msg)
         응답.status(400).send({message : msg})
       } else {
         요청.login(user, function(err){
-          if(err){ 
+          if(err){
             응답.status(400).send({message : msg})
             return next(err) 
           }
@@ -124,7 +137,7 @@ passport.use(new LocalStrategy({
     if (입력한비번 == decrypted) {
       return done(null, 결과, {message : "로그인성공했어요"})
     } else {
-      return done(null, false, { message: '비번틀렸어요' })
+      return done(null, false, { message: '비번틀렸어요', userId: 결과.id})
     }
   })
 }));
@@ -165,7 +178,7 @@ app.post("/join", function(요청, 응답){
       let encrypted = CryptoJS.AES.encrypt(JSON.stringify(userPW), secretKey).toString()
       console.log('암호화 : ' + encrypted)
 
-      db.collection("user").insertOne({id : 요청.body.id, pw : encrypted}, function(){
+      db.collection("user").insertOne({id : 요청.body.id, pw : encrypted, count : 0, block : false}, function(){
         console.log('저장완료')
         응답.status(200).send({message : "회원가입 성공했습니다."})
       })
