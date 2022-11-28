@@ -93,22 +93,31 @@ app.post('/', function (요청, 응답) {
               db.collection("user").updateOne({id:msg.userId}, {$inc: {count : 1}}, function(에러, 결과){
                 console.log("1증가함")
               })
-            } else{
-              db.collection("user").updateOne({id:msg.userId}, {$set: {block : "true"}}, function(에러, 결과){
-                console.log("block됨")
+            } else if(결과.count === 5){
+                db.collection("user").updateOne({id:msg.userId}, {$set: {block : "true"}}, function(에러, 결과){
+                  console.log("block됨")
               })
             }
           })
         }
         console.log(msg)
-        응답.status(400).send({message : msg})
+        if(msg.idBlock === "true"){
+          응답.status(400).send({message : {message : "계정이 막혔습니다."}})
+        } else{
+          응답.status(400).send({message : msg})
+        }
       } else {
         요청.login(user, function(err){
+          console.log(user)
           if(err){
             응답.status(400).send({message : msg})
             return next(err) 
           }
-          응답.status(200).send({name : user})
+          if(user.block === 'true'){
+            응답.status(400).send({message : {message : "계정이 막혔습니다."}})
+          } else{
+            응답.status(200).send({name : user})
+          }
         });
       }
   })(요청, 응답);
@@ -137,7 +146,7 @@ passport.use(new LocalStrategy({
     if (입력한비번 == decrypted) {
       return done(null, 결과, {message : "로그인성공했어요"})
     } else {
-      return done(null, false, { message: '비번틀렸어요', userId: 결과.id})
+      return done(null, false, { message: '비번틀렸어요', userId: 결과.id, idBlock: 결과.block})
     }
   })
 }));
