@@ -87,14 +87,14 @@ app.get('/login_success/:id', function(요청, 응답){
 app.post('/', function (요청, 응답) {
   passport.authenticate('local', {}, function(error, user, msg){
       if (!user) {
-        if(msg.message === '비번틀렸어요'){
+        if(msg.message === '비번틀렸어요' && msg.idBlock === "false"){
           db.collection("user").findOne({id:msg.userId}, function(에러, 결과){
             if(결과.count < 5){
               db.collection("user").updateOne({id:msg.userId}, {$inc: {count : 1}}, function(에러, 결과){
                 console.log("1증가함")
               })
             } else if(결과.count === 5){
-                db.collection("user").updateOne({id:msg.userId}, {$set: {block : "true"}}, function(에러, 결과){
+                db.collection("user").updateOne({id:msg.userId}, {$set: {block : "true", date : new Date()}}, function(에러, 결과){
                   console.log("block됨")
               })
             }
@@ -187,7 +187,7 @@ app.post("/join", function(요청, 응답){
       let encrypted = CryptoJS.AES.encrypt(JSON.stringify(userPW), secretKey).toString()
       console.log('암호화 : ' + encrypted)
 
-      db.collection("user").insertOne({id : 요청.body.id, pw : encrypted, count : 0, block : false}, function(){
+      db.collection("user").insertOne({id : 요청.body.id, pw : encrypted, count : 0, block : false, date:"없음"}, function(){
         console.log('저장완료')
         응답.status(200).send({message : "회원가입 성공했습니다."})
       })
