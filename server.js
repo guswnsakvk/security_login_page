@@ -93,7 +93,7 @@ app.post('/', function (요청, 응답) {
               db.collection("user").updateOne({id:msg.userId}, {$inc: {count : 1}}, function(에러, 결과){
                 console.log("1증가함")
               })
-            } else if(결과.count === 5){
+            } else if(결과.count === 5 && msg.idBlock === 'false'){
                 db.collection("user").updateOne({id:msg.userId}, {$set: {block : "true", date : new Date()}}, function(에러, 결과){
                   console.log("block됨")
               })
@@ -101,11 +101,7 @@ app.post('/', function (요청, 응답) {
           })
         }
         console.log(msg)
-        if(msg.idBlock === "true"){
-          응답.status(400).send({message : {message : "계정이 막혔습니다."}})
-        } else{
-          응답.status(400).send({message : msg})
-        }
+        응답.status(400).send({message : msg})
       } else {
         요청.login(user, function(err){
           console.log(user)
@@ -114,10 +110,25 @@ app.post('/', function (요청, 응답) {
             return next(err) 
           }
           if(user.block === 'true'){
-            응답.status(400).send({message : {message : "계정이 막혔습니다."}})
+            const loginTime = new Date()
+            console.log("user" + user.date)
+            console.log("login : " + loginTime)
+            const loginLastTime = loginTime - user.date
+            console.log('loginLastTime : ' + loginLastTime)
+            if(loginLastTime > 900000){
+              db.collection("user").updateOne({id: user.id}, {$set : {block : "false", date : "없음", count : 0}})
+              응답.status(200).send({name : user})
+            } else{
+              응답.status(400).send({message : {message : "계정이 막혔습니다."}})
+            }
           } else{
             응답.status(200).send({name : user})
           }
+          // if(user.block === 'true'){
+          //   응답.status(400).send({message : {message : "계정이 막혔습니다."}})
+          // } else{
+          //   응답.status(200).send({name : user})
+          // }
         });
       }
   })(요청, 응답);
